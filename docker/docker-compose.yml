@@ -8,8 +8,11 @@ services:
     container_name: "vinyl-service"
     ports:
       - 9001:9001
+      - 8001:8001
     environment:
       - BPL_JVM_THREAD_COUNT=50
+      - BPL_DEBUG_ENABLED=true
+      - BPL_DEBUG_PORT=8001
       - SPRING_DATASOURCE_URL=jdbc:postgresql://vin-postgres:5432/vinyls_catalog
       - SPRING_PROFILES_ACTIVE=testdata
 
