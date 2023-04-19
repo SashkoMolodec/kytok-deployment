@@ -1,11 +1,11 @@
 version: "3.8"
 services:
 
-  vinyls-service:
+  vinyl-service:
     depends_on:
       - vinyldb-postgres
-    image: "vinyls-service"
-    container_name: "vinyls-service"
+    image: "vinyl-service"
+    container_name: "vinyl-service"
     ports:
       - 9001:9001
       - 8001:8001
