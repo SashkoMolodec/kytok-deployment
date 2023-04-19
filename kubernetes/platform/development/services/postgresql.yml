@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    db: vinyldb-postgres
+data:
+  init.sql: |
+    CREATE DATABASE vinyldb_catalog;
+    CREATE DATABASE vinyldb_order;
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vinyldb-postgres
+  labels:
+    db: vinyldb-postgres
+spec:
+  selector:
+    matchLabels:
+      db: vinyldb-postgres
+  template:
+    metadata:
+      labels:
+        db: vinyldb-postgres
+    spec:
+      containers:
+        - name: vinyldb-postgres
+          image: postgres:14.4
+          env:
+            - name: POSTGRES_USER
+              value: user
+            - name: POSTGRES_PASSWORD
+              value: password
+          resources:
+            requests:
+              cpu: 100m
+              memory: 60Mi
+            limits:
+              cpu: 200m
+              memory: 120Mi
+          volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d
+              name: postgres-config-volume
+      volumes:
+        - name: postgres-config-volume
+          configMap:
+            name: postgres-config
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: vinyldb-postgres
+  labels:
+    db: vinyldb-postgres
+spec:
+  type: ClusterIP
+  selector:
+    db: vinyldb-postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

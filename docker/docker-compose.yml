@@ -3,7 +3,7 @@ services:
 
   vinyls-service:
     depends_on:
-      - vinyl-postgres
+      - vinyldb-postgres
     image: "vinyls-service"
     container_name: "vinyls-service"
     ports:
@@ -13,7 +13,7 @@ services:
       - BPL_JVM_THREAD_COUNT=50
       - BPL_DEBUG_ENABLED=true
       - BPL_DEBUG_PORT=8001
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://vinyl-postgres:5432/vinyls_catalog
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://vinyldb-postgres:5432/vinyldb_catalog
       - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
       - SPRING_PROFILES_ACTIVE=default
 
@@ -28,12 +28,12 @@ services:
       - BPL_DEBUG_ENABLED=true
       - BPL_DEBUG_PORT=9888
 
-  vinyl-postgres:
+  vinyldb-postgres:
     image: "postgres:14.4"
-    container_name: "vinyl-postgres"
+    container_name: "vinyldb-postgres"
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=vinyls_catalog
+      - POSTGRES_DB=vinyldb_catalog
