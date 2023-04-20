@@ -3,7 +3,7 @@ services:
 
   catalog-service:
     depends_on:
-      - kytokdb-postgres
+      - kytok-postgres
     image: "catalog-service"
     container_name: "catalog-service"
     ports:
@@ -13,13 +13,13 @@ services:
       - BPL_JVM_THREAD_COUNT=50
       - BPL_DEBUG_ENABLED=true
       - BPL_DEBUG_PORT=8001
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://kytokdb-postgres:5432/vinyldb_catalog
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://kytok-postgres:5432/vinyldb_catalog
       - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
       - SPRING_PROFILES_ACTIVE=default
 
   order-service:
     depends_on:
-      - kytokdb-postgres
+      - kytok-postgres
     image: "order-service"
     container_name: "order-service"
     ports:
@@ -29,7 +29,7 @@ services:
       - BPL_JVM_THREAD_COUNT=50
       - BPL_DEBUG_ENABLED=true
       - BPL_DEBUG_PORT=8002
-      - SPRING_DATASOURCE_URL=r2dbc:postgresql://kytokdb-postgres:5432/vinyldb_order
+      - SPRING_DATASOURCE_URL=r2dbc:postgresql://kytok-postgres:5432/vinyldb_order
       - KYTOK_CATALOG_SERVICE_URI=http://catalog-service:9001
 
   config-service:
@@ -43,9 +43,22 @@ services:
       - BPL_DEBUG_ENABLED=true
       - BPL_DEBUG_PORT=9888
 
-  kytokdb-postgres:
+  edge-service:
+    image: "edge-service"
+    container_name: "edge-service"
+    ports:
+      - 9000:9000
+      - 8000:8000
+    environment:
+      - BPL_DEBUG_ENABLED=true
+      - BPL_DEBUG_PORT=8000
+      - CATALOG_SERVICE_URL=http://catalog-service:9001
+      - ORDER_SERVICE_URL=http://order-service:9002
+      - SPRING_DATA_REDIS_HOST:kytok-redis
+
+  kytok-postgres:
     image: "postgres:14.4"
-    container_name: "kytokdb-postgres"
+    container_name: "kytok-postgres"
     ports:
       - 5432:5432
     environment:
@@ -53,3 +66,9 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - ./postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  kytok-redis:
+    image: "redis:7.0"
+    container_name: "kytok-redis"
+    ports:
+      - 6379:6379

@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: postgres-config
   labels:
-    db: kytokdb-postgres
+    db: kytok-postgres
 data:
   init.sql: |
     CREATE DATABASE vinyldb_catalog;
@@ -14,20 +14,20 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kytokdb-postgres
+  name: kytok-postgres
   labels:
-    db: kytokdb-postgres
+    db: kytok-postgres
 spec:
   selector:
     matchLabels:
-      db: kytokdb-postgres
+      db: kytok-postgres
   template:
     metadata:
       labels:
-        db: kytokdb-postgres
+        db: kytok-postgres
     spec:
       containers:
-        - name: kytokdb-postgres
+        - name: kytok-postgres
           image: postgres:14.4
           env:
             - name: POSTGRES_USER
@@ -54,13 +54,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: kytokdb-postgres
+  name: kytok-postgres
   labels:
-    db: kytokdb-postgres
+    db: kytok-postgres
 spec:
   type: ClusterIP
   selector:
-    db: kytokdb-postgres
+    db: kytok-postgres
   ports:
     - protocol: TCP
       port: 5432
