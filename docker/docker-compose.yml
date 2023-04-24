@@ -72,3 +72,12 @@ services:
     container_name: "kytok-redis"
     ports:
       - 6379:6379
+
+  kytok-rabbitmq:
+    image: rabbitmq:3.10.7-management
+    container_name: kytok-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
